@@ -1,10 +1,7 @@
-import {
-  IncomingMessage,
-  Server as NodeServer,
-  ServerResponse,
-} from "http";
+import { IncomingMessage, Server as NodeServer, ServerResponse } from "http";
 import { HTTP_CODES } from "../model/server.model";
-import express, { Express } from "express";
+import express from "express";
+import { MovieHandler } from "../handlers/movie.handler";
 
 export class Server {
   private server: NodeServer | undefined;
@@ -26,10 +23,13 @@ export class Server {
   ) {
     try {
       const route = this.getRouteFromUrl(request);
-      // switch (route) {
-      //   default:
-      //     break;
-      // }
+      switch (route) {
+        case "movies":
+          await new MovieHandler(request, response).handleRequest();
+          break;
+        default:
+          break;
+      }
     } catch (error) {
       response.writeHead(
         HTTP_CODES.INTERNAL_SERVER_ERROR,
