@@ -3,7 +3,7 @@ import {
   Server as NodeServer,
   ServerResponse,
 } from "http";
-import { HTTP_CODES } from "../model/ServerModel";
+import { HTTP_CODES } from "../model/server.model";
 import express, { Express } from "express";
 
 export class Server {

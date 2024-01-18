@@ -1,4 +1,4 @@
-import { Server } from "./server/server.model";
+import { Server } from "./server/Server";
 
 class Launcher {
     private server = new Server();
