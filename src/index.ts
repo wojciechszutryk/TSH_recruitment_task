@@ -6,10 +6,6 @@ class Launcher {
     public startServer(){
         this.server.startServer();
     }
-
-    public stopServer(){
-        this.server.stopServer();
-    }
 }
 
 const launcher = new Launcher();
