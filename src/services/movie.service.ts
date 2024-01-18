@@ -40,26 +40,44 @@ export class MoviesService {
     );
   }
 
-  async addMovie(movie: Movie): Promise<number> {
-    if (this.validateMovie(movie)) {
-      const id = (await this.findLastMovieId()) + 1;
-      await this.saveMovieToDB({ ...movie, id });
-      return id;
+  async addMovie(movieData: Movie): Promise<Movie> {
+    if (this.validateMovie(movieData)) {
+      const { movies, genres } = await this.loadDataFromDb();
+      const lastMovieId = movies.reduce((acc, movie) => {
+        const id = movie.id;
+        return id > acc ? id : acc;
+      }, 0);
+
+      const newMovie = { ...movieData, id: lastMovieId + 1 };
+      const movieGenres = movieData.genres;
+      let newGenresToSave: string[] = [];
+
+      if (movieGenres) {
+        newGenresToSave = movieGenres.filter(
+          (genre) => !genres.includes(genre)
+        );
+      }
+
+      await this.saveDataToDB(newMovie, newGenresToSave);
+      return newMovie;
     } else {
       throw new Error("Invalid movie data");
     }
   }
 
   private validateMovie(movie: Movie): boolean {
-    return (
-      movie.genres.length > 0 &&
-      movie.title.length > 0 &&
-      movie.title.length <= 255 &&
-      Number.isInteger(movie.year) &&
-      Number.isInteger(movie.runtime) &&
-      movie.director.length > 0 &&
-      movie.director.length <= 255
-    );
+    if (!movie.genres || movie.genres.length === 0) {
+      throw new Error("Genres cannot be empty");
+    } else if (!movie.title || movie.title.length === 0) {
+      throw new Error("Title cannot be empty");
+    } else if (movie.title.length > 255) {
+      throw new Error("Title cannot be longer than 255 characters");
+    } else if (!movie.director || movie.director.length === 0) {
+      throw new Error("Director cannot be empty");
+    } else if (movie.director.length > 255) {
+      throw new Error("Director cannot be longer than 255 characters");
+    }
+    return true;
   }
 
   private async loadDataFromDb(): Promise<DB> {
@@ -76,20 +94,16 @@ export class MoviesService {
     }
   }
 
-  private async saveMovieToDB(movie: Movie): Promise<void> {
+  private async saveDataToDB(
+    movie: Movie,
+    newGenres?: string[]
+  ): Promise<void> {
     const currentData = await this.loadDataFromDb();
     currentData.movies.push(movie);
-    const dbContent = { ...currentData };
-    await fs.writeFile(DB_PATH, JSON.stringify(dbContent, null, 2), "utf-8");
-  }
-
-  private async findLastMovieId(): Promise<number> {
-    const movies = await this.loadMoviesFromDB();
-    const lastId = movies.reduce((acc, movie) => {
-      const id = movie.id;
-      return id > acc ? id : acc;
-    }, 0);
-
-    return lastId;
+    if (newGenres) {
+      currentData.genres.push(...newGenres);
+    }
+    const dbContent = JSON.stringify(currentData, null, 2);
+    await fs.writeFile(DB_PATH, dbContent, "utf-8");
   }
 }
