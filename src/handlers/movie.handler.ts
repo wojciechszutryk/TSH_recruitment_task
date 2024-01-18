@@ -1,16 +1,16 @@
-import { MovieDataAccess } from "../db/movie.db";
+import { MoviesService } from "../services/movie.service";
 import { IncomingMessage, ServerResponse } from "http";
 import { HTTP_METHODS } from "../model/server.model";
 
 export class MovieHandler {
   private request: IncomingMessage;
   private response: ServerResponse;
-  private movieDataAccess: MovieDataAccess;
+  private moviesService: MoviesService;
 
   constructor(request: IncomingMessage, response: ServerResponse) {
     this.request = request;
     this.response = response;
-    this.movieDataAccess = new MovieDataAccess();
+    this.moviesService = new MoviesService();
   }
 
   public async handleRequest() {
