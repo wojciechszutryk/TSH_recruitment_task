@@ -16,30 +16,25 @@ export class MovieHandler {
   }
 
   public async handleRequest() {
-    try {
-      switch (this.request.method) {
-        case HTTP_METHODS.POST:
-          await this.handlePost();
-          break;
-        case HTTP_METHODS.GET:
-          await this.handleGet();
-          break;
-        default:
-          break;
-      }
-    } catch (error) {
-      console.error(error);
-      this.response.statusCode = 500;
-      this.response.end(JSON.stringify({ error: "Internal Server Error" }));
+    switch (this.request.method) {
+      case HTTP_METHODS.POST:
+        await this.handlePost();
+        break;
+      case HTTP_METHODS.GET:
+        await this.handleGet();
+        break;
+      default:
+        this.response.statusCode = 404;
+        this.response.end(JSON.stringify({ error: "Method not allowed" }));
     }
   }
 
   async handlePost() {
     try {
       const body: Movie = await this.request.body;
-      const movieId = await this.moviesService.addMovie(body);
+      const createdMovie = await this.moviesService.addMovie(body);
       this.response.statusCode = 201;
-      this.response.end(JSON.stringify({ id: movieId }));
+      this.response.end(JSON.stringify(createdMovie));
     } catch (error) {
       this.handleError(error);
     }
