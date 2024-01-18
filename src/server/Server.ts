@@ -1,6 +1,6 @@
 import { IncomingMessage, Server as NodeServer, ServerResponse } from "http";
 import { HTTP_CODES } from "../model/server.model";
-import express from "express";
+import express, {Request, Response} from "express";
 import { MovieHandler } from "../handlers/movie.handler";
 
 export class Server {
@@ -9,6 +9,7 @@ export class Server {
   public async startServer() {
     const app = express();
 
+    app.use(express.json());
     app.use(async (req, res) => {
       await this.handleRequest(req, res);
       res.end();
@@ -18,8 +19,8 @@ export class Server {
   }
 
   private async handleRequest(
-    request: IncomingMessage,
-    response: ServerResponse
+    request: Request,
+    response: Response
   ) {
     try {
       const route = this.getRouteFromUrl(request);
@@ -39,10 +40,13 @@ export class Server {
     }
   }
 
-  private getRouteFromUrl(request: IncomingMessage) {
-    const fullRoute = request.url;
-    if (fullRoute) {
-      return fullRoute.split("/")[1];
+  private getRouteFromUrl(request: IncomingMessage): string | undefined {
+    const fullUrl = request.url;
+    if (fullUrl) {
+      const parsedUrl = new URL(fullUrl, `http://${request.headers.host}`);
+      const pathname = parsedUrl.pathname;
+      const segments = pathname.split("/").filter(Boolean);
+      return segments[0];
     }
   }
 
