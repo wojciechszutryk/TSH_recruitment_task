@@ -1,6 +1,6 @@
 import { HTTP_CODES } from "../model/server.model";
 import express, { Request, Response } from "express";
-import { MovieHandler } from "../handlers/movie.handler";
+import { MovieHandler } from "../handlers/movies.handler";
 import { json } from "body-parser";
 
 export class Server {

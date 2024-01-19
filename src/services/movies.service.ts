@@ -14,10 +14,10 @@ export class MoviesService {
 
   async getMoviesByDuration(duration: number): Promise<Movie[]> {
     const movies = await this.loadMoviesFromDB();
-    return movies.filter(
-      (movie) =>
-        movie.runtime >= duration - 10 && movie.runtime <= duration + 10
-    );
+    return movies.filter((movie) => {
+      const runtime = parseFloat(movie.runtime);
+      return runtime >= duration - 10 && runtime <= duration + 10;
+    });
   }
 
   async getMoviesByGenres(genres: string[]): Promise<Movie[]> {
@@ -32,12 +32,14 @@ export class MoviesService {
     genres: string[]
   ): Promise<Movie[]> {
     const movies = await this.loadMoviesFromDB();
-    return movies.filter(
-      (movie) =>
-        movie.runtime >= duration - 10 &&
-        movie.runtime <= duration + 10 &&
+    return movies.filter((movie) => {
+      const runtime = parseFloat(movie.runtime);
+      return (
+        runtime >= duration - 10 &&
+        runtime <= duration + 10 &&
         movie.genres.some((genre) => genres.includes(genre))
-    );
+      );
+    });
   }
 
   async addMovie(movieData: Movie): Promise<Movie> {
@@ -90,7 +92,7 @@ export class MoviesService {
       const { movies } = await this.loadDataFromDb();
       return movies;
     } catch (error) {
-      return [];
+      throw new Error("Could not load movies from DB");
     }
   }
 

@@ -1,8 +1,8 @@
-import { MovieHandler } from "../../src/handlers/movie.handler";
+import { MovieHandler } from "../../src/handlers/movies.handler";
 import { HTTP_CODES } from "../../src/model/server.model";
 import { Server } from "../../src/server/Server";
 
-jest.mock("../../src/handlers/movie.handler");
+jest.mock("../../src/handlers/movies.handler");
 
 const requestMock = {
   url: "",
@@ -21,7 +21,6 @@ const responseMock = {
 const nextMock = jest.fn();
 
 var listenMock = jest.fn();
-var useMock = jest.fn();
 
 jest.mock("express", () => {
   return () => {

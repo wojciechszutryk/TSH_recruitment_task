@@ -1,10 +1,8 @@
-import { MovieHandler } from "../../src/handlers/movie.handler";
+import { MovieHandler } from "../../src/handlers/movies.handler";
 import { HTTP_CODES, HTTP_METHODS } from "../../src/model/server.model";
 import { Request, Response } from "express";
-import { MoviesService } from "../../src/services/movie.service";
-import { send } from "process";
+import { MoviesService } from "../../src/services/movies.service";
 import { Movie } from "../../src/model/movie/movie.model";
-import { error } from "console";
 
 const addMovieMock = jest.fn();
 const getMoviesByDurationAndGenresMock = jest.fn();
@@ -12,7 +10,7 @@ const getMoviesByDurationMock = jest.fn();
 const getRandomMovieMock = jest.fn();
 const getMoviesByGenresMock = jest.fn();
 
-jest.mock("../../src/services/movie.service", () => {
+jest.mock("../../src/services/movies.service", () => {
   return {
     MoviesService: jest.fn().mockImplementation(() => ({
       addMovie: addMovieMock,
@@ -45,8 +43,8 @@ describe("RegisterHandler test suite", () => {
   const someValidMovie = {
     genres: ["Action", "Drama"],
     title: "someTitle",
-    year: 2020,
-    runtime: 120,
+    year: "2020",
+    runtime: "120",
     director: "someDirector",
   } as Movie;
 

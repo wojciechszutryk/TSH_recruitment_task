@@ -1,4 +1,4 @@
-import { MoviesService } from "../services/movie.service";
+import { MoviesService } from "../services/movies.service";
 import { IncomingMessage, ServerResponse } from "http";
 import { HTTP_METHODS } from "../model/server.model";
 import { Movie } from "../model/movie/movie.model";
